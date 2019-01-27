@@ -1,0 +1,5 @@
+{
+	"extends": [
+		"./node_modules/@eric.dahlseng/linter-configuration/eslintrc.json"
+	]
+}

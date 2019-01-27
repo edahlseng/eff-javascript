@@ -1,0 +1,3 @@
+{
+	"extends": ["./node_modules/@eric.dahlseng/linter-configuration/commitlintrc"]
+}

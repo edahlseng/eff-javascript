@@ -1,0 +1,62 @@
+{
+  "name": "eff",
+  "version": "0.2.0",
+  "description": "An extensible effect monad based on the freer monad",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf ./dist && babel sources --out-dir dist --copy-files --source-maps inline",
+    "lint": "npm run lint:commit -- --from master; npm run lint:js; npm run lint:json; npm run lint:yaml",
+    "lint:commit": "commitlint",
+    "lint:js": "eslint ./",
+    "lint:json": "prettier --config .prettierrc.js --list-different '**/*.json'",
+    "lint:yaml": "prettier --config .prettierrc.js --list-different '**/*.yaml' '**/*.yml'",
+    "lint-report:commit": "mkdir -p ./linting-results/commitlint && commitlint --format commitlint-format-junit > ./linting-results/commitlint/report.xml",
+    "lint-report:js": "eslint ./ --output-file ./linting-results/eslint/report.xml --format junit",
+    "lint-report:json": "mkdir -p ./linting-results/prettier-json && prettier-junit --config .prettierrc.js '**/*.json' > ./linting-results/prettier-json/report.xml",
+    "release": "standard-version",
+    "lint-report:yaml": "mkdir -p ./linting-results/prettier-yaml && prettier-junit --config .prettierrc.js '**/*.yaml' '**/*.yml' > ./linting-results/prettier-yaml/report.xml",
+    "test": "ava ./dist/**/*.test.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/edahlseng/eff.git"
+  },
+  "keywords": [
+    "eff",
+    "effect",
+    "effects",
+    "monad",
+    "freer",
+    "free",
+    "functional"
+  ],
+  "author": "Eric Dahlseng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/edahlseng/eff/issues"
+  },
+  "homepage": "https://github.com/edahlseng/eff#readme",
+  "dependencies": {
+    "daggy": "^1.3.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "@eric.dahlseng/configuration-build": "^0.1.0",
+    "@eric.dahlseng/linter-configuration": "^0.3.0",
+    "@eric.dahlseng/standard-version": "^1.0.3",
+    "ava": "^1.1.0",
+    "jsverify": "^0.8.4"
+  },
+  "ava": {
+    "babel": false,
+    "compileEnhancements": false
+  },
+  "babel": {
+    "extends": "./node_modules/@eric.dahlseng/configuration-build/babelrc.browser.json"
+  },
+  "standard-version": {
+    "skip": {
+      "tag": true
+    }
+  }
+}
