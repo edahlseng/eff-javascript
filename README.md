@@ -16,7 +16,7 @@ This library comes with several different effects already defined, though custom
 The first step is to write the application as a definition of the effects that will be performed:
 
 ```JavaScript
-import { FileSystem, run } from "eff"; // Note: `Async` and `run` will be used later on in the example
+import { FileSystem, run } from "eff"; // Note: `run` will be used later on in the example
 
 const uppercase = str => str.toUppercase();
 

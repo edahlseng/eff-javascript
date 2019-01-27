@@ -2,7 +2,7 @@
   "name": "eff",
   "version": "0.2.0",
   "description": "An extensible effect monad based on the freer monad",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf ./dist && babel sources --out-dir dist --copy-files --source-maps inline",
     "lint": "npm run lint:commit -- --from master; npm run lint:js; npm run lint:json; npm run lint:yaml",
