@@ -1,0 +1,12 @@
+[ignore]
+
+[include]
+<<PROJECT_ROOT>>/../../../../../1 Projects/cli-tools
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
