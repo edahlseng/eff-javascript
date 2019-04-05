@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  general: edahlseng/general@1.16.1
+  general: edahlseng/general@1.17.1
 
 workflows:
   main:
@@ -38,11 +38,20 @@ workflows:
           git-ssh-fingerprint: 7e:b9:a7:66:c3:7e:af:a3:ca:07:c9:2b:2f:87:f8:63
           git-user-email: edahlseng@users.noreply.github.com
           git-user-name: "Release Bot"
+          npm-authentication-token: $NPM_AUTH_TOKEN
           requires:
             - general/lint-commit
             - general/lint-js
             - general/lint-json
             - general/lint-yaml
+          filters:
+            branches:
+              only: master
+      - general/create-github-release:
+          context: Release Bot
+          github-access-token: $RELEASE_BOT_GITHUB_TOKEN
+          requires:
+            - general/tag-and-publish-npm
           filters:
             branches:
               only: master
