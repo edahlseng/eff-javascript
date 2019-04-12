@@ -21,7 +21,7 @@ workflows:
             - general/install-dependencies-npm
       - general/create-release-pr:
           context: Release Bot
-          git-ssh-fingerprint: 7e:b9:a7:66:c3:7e:af:a3:ca:07:c9:2b:2f:87:f8:63
+          git-ssh-fingerprint: 59:3a:2a:4e:07:59:c2:d4:43:0e:f6:cf:0e:9c:29:d8
           git-user-email: edahlseng@users.noreply.github.com
           git-user-name: "Release Bot"
           github-access-token: $RELEASE_BOT_GITHUB_TOKEN
@@ -35,7 +35,7 @@ workflows:
               only: master
       - general/tag-and-publish-npm:
           context: NPM Publish - @eric.dahlseng
-          git-ssh-fingerprint: 7e:b9:a7:66:c3:7e:af:a3:ca:07:c9:2b:2f:87:f8:63
+          git-ssh-fingerprint: 59:3a:2a:4e:07:59:c2:d4:43:0e:f6:cf:0e:9c:29:d8
           git-user-email: edahlseng@users.noreply.github.com
           git-user-name: "Release Bot"
           npm-authentication-token: $NPM_AUTH_TOKEN
