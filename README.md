@@ -8,8 +8,13 @@ Motivation
 
 Composition is the pinnacle of reusability for software. While easy to achieve when working with pure functions, the reality is that any useful application necessarily produces _effects_, and are by definition impure, making composition much more difficult. The Eff monad allows for these "impure" applications to easily utilize composition by splitting effects into two separate pieces – the definition of an effect, and the interpretation of an effect – each of which can be easily composed.
 
-Usage Example
+Documentation
 -------------
+
+A detailed API reference can be found in the [`documentation/` directory](./documentation).
+
+Example
+-------
 
 This library comes with several different effects already defined, though custom effects can be easily written. This example uses the `FileSystem` effect to read from a file, uppercase all of its content, and then write a new file with the transformed content.
 
