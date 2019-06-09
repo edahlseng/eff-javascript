@@ -18,6 +18,7 @@ import {
 	gte,
 	both,
 	anyPass,
+	isNil,
 } from "ramda";
 
 import Eff, { interpreter, send } from "./eff.js";
@@ -56,6 +57,7 @@ const controlSequenceKeypress = inputStream =>
 
 const escapedKeypress = inputStream =>
 	cond([
+		[equals(""), always({})],
 		[
 			either(equals("\b"), equals("\x7f")),
 			always({ name: "backspace", meta: true }),
@@ -63,12 +65,12 @@ const escapedKeypress = inputStream =>
 		[equals(" "), always({ name: "space", meta: true, string: " " })],
 		[
 			test(/[a-zA-Z0-9]/),
-			applySpec({ name: toLower, meta: true, shift: test(/[A-Z]/) }),
+			applySpec({ name: toLower, meta: T, shift: test(/[A-Z]/) }),
 		],
 		[equals("0"), () => zeroPrefixedKeypress(inputStream)],
 		[equals("["), () => controlSequenceKeypress(inputStream)],
 		[T, always({})],
-	])(inputStream.read(1));
+	])((inputStream.read(1) || "").toString());
 
 const nextKeypress = inputStream => ({
 	name: "unknown",
@@ -77,6 +79,7 @@ const nextKeypress = inputStream => ({
 	shift: false,
 	string: "",
 	...cond([
+		[equals(""), always({})],
 		[equals("\r"), always({ name: "return", string: "\r" })],
 		[equals("\n"), always({ name: "enter", string: "\n" })],
 		[equals("\t"), always({ name: "tab", string: "\t" })],
@@ -84,6 +87,7 @@ const nextKeypress = inputStream => ({
 		[equals(" "), always({ name: "space", string: " " })],
 		[equals("\x1b"), () => escapedKeypress(inputStream)],
 		[
+			// $FlowFixMe
 			flip(lte)("\x1a"),
 			pipe(
 				c => c.charCodeAt(0),
@@ -91,7 +95,7 @@ const nextKeypress = inputStream => ({
 				String.fromCharCode,
 				applySpec({
 					name: identity,
-					ctrl: always(true),
+					ctrl: T,
 					string: identity,
 				}),
 			),
@@ -106,13 +110,15 @@ const nextKeypress = inputStream => ({
 		],
 		[
 			both(flip(gte)("A"), flip(lte)("Z")),
-			applySpec({ name: toLower, shift: true, string: identity }),
+			applySpec({ name: toLower, shift: T, string: identity }),
 		],
 		[T, always({})],
-	])(inputStream.read(1)),
+	])((inputStream.read(1) || "").toString()),
 });
 
-export const interpretInput = inputStream =>
+export const interpretInput = (
+	inputStream: stream$Readable & { +setRawMode?: boolean => void },
+) =>
 	interpreter({
 		onPure: Eff.Pure,
 		predicate: x => Input.is(x),

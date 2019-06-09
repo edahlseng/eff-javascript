@@ -10,7 +10,7 @@ const Reader = daggy.taggedSum("Reader", {
 
 export const get = () => send(Reader.get);
 
-export const interpretReader = i =>
+export const interpretReader = (i: any) =>
 	interpreter({
 		onPure: Eff.Pure,
 		predicate: x => Reader.is(x),

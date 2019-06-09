@@ -11,11 +11,13 @@ const FileSystem = taggedSum("FileSystem", {
 	writeFile: ["path", "content"],
 });
 
-export const readFile = path => send(FileSystem.readFile(path));
-export const writeFile = (path, content) =>
-	send(FileSystem.writeFile(path, content));
+export const readFile = (path: string) => send(FileSystem.readFile(path));
+export const writeFile = (
+	path: string,
+	content: string | Buffer | $TypedArray | DataView,
+) => send(FileSystem.writeFile(path, content));
 
-export const interpretLocalFileSystem = fileSystemRoot =>
+export const interpretLocalFileSystem = (fileSystemRoot: string) =>
 	interpreter({
 		onPure: x => Eff.Pure(x),
 		predicate: x => FileSystem.is(x),

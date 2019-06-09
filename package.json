@@ -15,7 +15,9 @@
     "lint-report:json": "mkdir -p ./linting-results/prettier-json && prettier-junit --config .prettierrc.js '**/*.json' > ./linting-results/prettier-json/report.xml",
     "release": "standard-version",
     "lint-report:yaml": "mkdir -p ./linting-results/prettier-yaml && prettier-junit --config .prettierrc.js '**/*.yaml' '**/*.yml' > ./linting-results/prettier-yaml/report.xml",
-    "test": "ava ./dist/**/*.test.*"
+    "test": "ava ./dist/**/*.test.*",
+    "validate": "npm run validate:js",
+    "validate:js": "flow check"
   },
   "repository": {
     "type": "git",
@@ -45,6 +47,7 @@
     "@eric.dahlseng/linter-configuration": "^0.3.0",
     "@eric.dahlseng/standard-version": "^1.0.3",
     "ava": "^1.1.0",
+    "flow-bin": "^0.100.0",
     "jsverify": "^0.8.4"
   },
   "ava": {

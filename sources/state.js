@@ -11,11 +11,11 @@ const State = daggy.taggedSum("State", {
 });
 
 export const get = () => send(State.get);
-export const modify = modificationFunction =>
+export const modify = (modificationFunction: any => any) =>
 	send(State.modify(modificationFunction));
-export const put = newState => send(State.put(newState));
+export const put = (newState: mixed) => send(State.put(newState));
 
-export const interpretState = startingState => {
+export const interpretState = (startingState: mixed) => {
 	let state = startingState;
 
 	return interpreter({

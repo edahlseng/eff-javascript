@@ -64,7 +64,13 @@ Eff.of = Eff.Pure;
 
 export default Eff;
 
-export const run = (...interpreters) => callback => effectfulMonad =>
+type Pure = { cata: Function };
+type Impure = { cata: Function };
+type EffMonad = Pure | Impure;
+
+export const run = (...interpreters: Array<Function>) => (
+	callback: Function,
+) => (effectfulMonad: EffMonad) =>
 	interpreters.reduce(
 		(previousInterpreter, currentInterpreter) =>
 			currentInterpreter({
@@ -82,12 +88,23 @@ export const run = (...interpreters) => callback => effectfulMonad =>
 			}),
 	)(effectfulMonad);
 
-export const send = t => Eff.Impure(t, Eff.Pure);
+export const send = (t: any) => Eff.Impure(t, Eff.Pure);
 
-export const interpreter = ({ onPure, predicate, handler }) => ({
+export const interpreter = ({
+	onPure,
+	predicate,
+	handler,
+}: {
+	onPure: Function,
+	predicate: Function,
+	handler: Function,
+}) => ({
 	interpreterContinuation,
 	interpreterRestart,
-}) => m =>
+}: {
+	interpreterContinuation: Function,
+	interpreterRestart: Function,
+}) => (m: EffMonad) =>
 	m.cata({
 		Pure: x => interpreterContinuation(onPure(x)),
 		Impure: (effect, continuation) =>
