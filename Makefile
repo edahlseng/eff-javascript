@@ -12,3 +12,6 @@ build: dist
 
 test: dist package.json
 	npm run test
+
+validate:
+	npm run validate

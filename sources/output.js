@@ -8,10 +8,10 @@ const Output = daggy.taggedSum("Output", {
 	putString: ["string"],
 });
 
-export const putString = s => send(Output.putString(s));
-export const putStringLine = s => send(Output.putString(s + "\n"));
+export const putString = (s: string) => send(Output.putString(s));
+export const putStringLine = (s: string) => send(Output.putString(s + "\n"));
 
-export const interpretOutput = outputStream =>
+export const interpretOutput = (outputStream: stream$Writable) =>
 	interpreter({
 		onPure: Eff.Pure,
 		predicate: x => Output.is(x),
