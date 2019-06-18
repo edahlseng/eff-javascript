@@ -18,7 +18,6 @@ import {
 	gte,
 	both,
 	anyPass,
-	isNil,
 } from "ramda";
 
 import Eff, { interpreter, send } from "./eff.js";
