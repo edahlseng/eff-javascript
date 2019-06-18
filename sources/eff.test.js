@@ -153,7 +153,7 @@ test("Right Identity", t => {
 	t.pass();
 });
 
-test.failing("Associativity", t => {
+test("Associativity", t => {
 	// (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g)
 
 	jsverify.assert(
@@ -172,7 +172,7 @@ test.failing("Associativity", t => {
 					Eff.Pure,
 				);
 
-				Eff.equals(
+				return Eff.equals(
 					Eff.chain(Eff.chain(Eff.Pure(a), f2), g2),
 					Eff.chain(Eff.Pure(a), x => Eff.chain(f2(x), g2)),
 				);
