@@ -10,8 +10,11 @@ dist: node_modules package.json sources
 
 build: dist
 
-test: dist package.json
+test: package.json
 	npm run test
+
+test-report: dist package.json
+	npm run test-report
 
 validate:
 	npm run validate
