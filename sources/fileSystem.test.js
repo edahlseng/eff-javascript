@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 
 import { run } from "./eff";
-import { readFile, writeFile, interpretLocalFileSystem } from "./filesystem";
+import { readFile, writeFile, interpretLocalFileSystem } from "./fileSystem";
 import { tempDirectory } from "./testUtils.js";
 
 test.cb("Read file", t => {
