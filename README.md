@@ -77,6 +77,11 @@ mockInterpreter(application);
 
 We can interpret the application definition with a mock interpreter just as easily as the original interpreter. This allows us to verify the logic of the application without needing to actually interact with a live filesystem.
 
+Contributing
+------------
+
+Community contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
+
 References
 ----------
 
