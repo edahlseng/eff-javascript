@@ -1,22 +1,38 @@
-Eff – An Extensible Effect Monad
-================================
+Eff
+===
 
-Eff is an extensible effect monad, based on the freer monad. It is both Fantasy Land and Static Land compliant.
+An extensible effect monad.
+
+[![CircleCI](https://circleci.com/gh/edahlseng/eff/tree/master.svg?style=shield)](https://circleci.com/gh/edahlseng/eff/tree/master)
+
+Eff is a container for effects. It separates effects into two parts – a description of what needs to be done, and the logic to make it happen. These individual parts can be combined with other effects, creating applications that are much easier to understand, test, and maintain.
 
 Motivation
 ----------
 
-Composition is the pinnacle of reusability for software. While easy to achieve when working with pure functions, the reality is that any useful application necessarily produces _effects_, and are by definition impure, making composition much more difficult. The Eff monad allows for these "impure" applications to easily utilize composition by splitting effects into two separate pieces – the definition of an effect, and the interpretation of an effect – each of which can be easily composed.
+Composition is the pinnacle of reusability for software. While easy to achieve when working with pure functions, the reality is that any useful application necessarily produces _effects_, and are by definition impure, making composition much more difficult. The Eff monad allows for these "impure" applications to easily utilize composition by splitting effects into two separate pieces – the definition of an effect, and the interpretation of an effect – each of which can be composed.
 
 Documentation
 -------------
 
-A detailed API reference can be found in the [`documentation/` directory](./documentation).
+Eff is available on NPM. To install:
+
+```shell
+npm install eff
+```
+
+To use:
+
+```JavaScript
+import { pure, send, run, ... } from 'eff';
+```
+
+For an introduction to working with Eff, see the example below. A detailed API reference can be found in the [`documentation/` directory](./documentation/).
 
 Example
 -------
 
-This library comes with several different effects already defined, though custom effects can be easily written. This example uses the `FileSystem` effect to read from a file, uppercase all of its content, and then write a new file with the transformed content.
+This library comes with several different effects already defined, though custom effects can be easily written. This example uses the `FileSystem` effects to read from a file, uppercase all of its content, and then write a new file with the transformed content.
 
 The first step is to write the application as a definition of the effects that will be performed:
 
