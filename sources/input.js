@@ -20,7 +20,7 @@ import {
 	anyPass,
 } from "ramda";
 
-import Eff, { interpreter, send } from "./eff.js";
+import { interpreter, send } from "./eff.js";
 
 const Input = daggy.taggedSum("Input", {
 	getCharacter: [],
@@ -119,7 +119,6 @@ export const interpretInput = (
 	inputStream: stream$Readable & { +setRawMode?: boolean => void },
 ) =>
 	interpreter({
-		onPure: Eff.Pure,
 		predicate: x => Input.is(x),
 		handler: inputEffect =>
 			inputEffect.cata({

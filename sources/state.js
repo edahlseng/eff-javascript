@@ -2,7 +2,7 @@
 
 import daggy from "daggy";
 
-import Eff, { interpreter, send } from "./eff.js";
+import { interpreter, send } from "./eff.js";
 
 const State = daggy.taggedSum("State", {
 	get: [],
@@ -19,7 +19,6 @@ export const interpretState = (startingState: mixed) => {
 	let state = startingState;
 
 	return interpreter({
-		onPure: Eff.Pure,
 		predicate: x => State.is(x),
 		handler: stateEffect =>
 			stateEffect.cata({

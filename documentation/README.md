@@ -192,7 +192,7 @@ interpreter :: (a -> Eff b c, effect -> boolean, effect -> (d -> void) -> void) 
 ```flow
 type Interpreter<effect> = ({interpreterCotinuation: Interpreter<any>, interpreterRestart: Interpreter<any>}) => Eff<any, any> => void;
 
-declare function interpreter<a, b, c, d, effect>({ onPure: a => Eff<b, c>, predicate: (effect) => boolean, handler: (effect) => (d => void) => void}) => Interpreter effect
+declare function interpreter<a, b, c, d, effect>({ predicate: (effect) => boolean, handler: (effect) => (d => void) => void}) => Interpreter effect
 ```
 
 Example:
@@ -201,7 +201,6 @@ Example:
 import { interpreter, map, pure, send } from 'eff';
 
 const randomNumberInterpreter = interpreter({
-    onPure: pure,
     predicate: x => x.type === 'random-number',
     handler: effect => continuation => continuation(Math.random()),
 })
@@ -229,7 +228,6 @@ import { chain, interpreter, pure, run, send } from 'eff';
 const application = chain(value => pure(value * 2))(send({ type: 'random-number' }));
 
 const randomNumberInterpreter = interpreter({
-    onPure: pure,
     predicate: x => x.type === 'random-number',
     handler: effect => continuation => continuation(Math.random()),
 })

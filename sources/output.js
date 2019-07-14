@@ -2,7 +2,7 @@
 
 import daggy from "daggy";
 
-import Eff, { interpreter, send } from "./eff.js";
+import { interpreter, send } from "./eff.js";
 
 const Output = daggy.taggedSum("Output", {
 	putString: ["string"],
@@ -13,7 +13,6 @@ export const putStringLine = (s: string) => send(Output.putString(s + "\n"));
 
 export const interpretOutput = (outputStream: stream$Writable) =>
 	interpreter({
-		onPure: Eff.Pure,
 		predicate: x => Output.is(x),
 		handler: outputEffect =>
 			outputEffect.cata({

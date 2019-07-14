@@ -91,11 +91,9 @@ export const run = (...interpreters: Array<Function>) => (
 export const send = (t: any) => Eff.Impure(t, Eff.Pure);
 
 export const interpreter = ({
-	onPure,
 	predicate,
 	handler,
 }: {
-	onPure: Function,
 	predicate: Function,
 	handler: Function,
 }) => ({
@@ -106,7 +104,7 @@ export const interpreter = ({
 	interpreterRestart: Function,
 }) => (m: EffMonad) =>
 	m.cata({
-		Pure: x => interpreterContinuation(onPure(x)),
+		Pure: x => interpreterContinuation(Eff.Pure(x)),
 		Impure: (effect, continuation) =>
 			predicate(effect)
 				? handler(effect)(
