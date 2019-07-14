@@ -4,7 +4,7 @@ import { taggedSum } from "daggy";
 import fs from "fs";
 import path from "path";
 
-import Eff, { interpreter, send } from "./eff";
+import { interpreter, send } from "./eff";
 
 const FileSystem = taggedSum("FileSystem", {
 	readFile: ["path"],
@@ -19,7 +19,6 @@ export const writeFile = (
 
 export const interpretLocalFileSystem = (fileSystemRoot: string) =>
 	interpreter({
-		onPure: x => Eff.Pure(x),
 		predicate: x => FileSystem.is(x),
 		handler: fileSystemEffect =>
 			fileSystemEffect.cata({
