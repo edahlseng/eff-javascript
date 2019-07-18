@@ -1,6 +1,6 @@
 /* @flow */
 
-import { always, pipe, equals, F } from "ramda";
+import { always, pipe, equals as equalsGeneric, F } from "ramda";
 import { taggedSum } from "daggy";
 
 // value :: any
@@ -11,9 +11,18 @@ const Eff = taggedSum("Eff", {
 	Impure: ["effect", "continuation"],
 });
 
-Eff.prototype.map = function(f) {
-	return this.chain(a => Eff.of(f(a)));
-};
+type Pure = { cata: Function };
+type Impure = { cata: Function };
+type EffMonad = Pure | Impure;
+
+export const pure = Eff.Pure;
+
+export const of = pure;
+
+export const impure = (continuation: Function) => (effect: EffMonad) =>
+	Eff.Impure(effect, continuation);
+
+export const send = (effect: any) => Eff.Impure(effect, Eff.Pure);
 
 const pipeK = (a, b) => c => a(c).chain(b);
 
@@ -21,29 +30,41 @@ const pipeK = (a, b) => c => a(c).chain(b);
 // Equals
 // -----------------------------------------------------------------------------
 
-Eff.equals = (a, b) =>
+export const map = (f: Function) => (eff: EffMonad) =>
+	chain(a => pure(f(a)))(eff);
+
+Eff.prototype.map = function(f) {
+	return map(f)(this);
+};
+
+// -----------------------------------------------------------------------------
+// Equals
+// -----------------------------------------------------------------------------
+
+export const equals = (a: EffMonad) => (b: EffMonad) =>
 	a.cata({
 		Pure: b.cata({
-			Pure: equals,
+			Pure: equalsGeneric,
 			Impure: always(F),
 		}),
 		Impure: (aEffect, aContinuation) =>
 			b.cata({
 				Pure: F,
 				Impure: (bEffect, bContinuation) =>
-					equals(aEffect, bEffect) && equals(aContinuation, bContinuation),
+					equalsGeneric(aEffect, bEffect) &&
+					equalsGeneric(aContinuation, bContinuation),
 			}),
 	});
 
 Eff.prototype.equals = function(b) {
-	return Eff.equals(this, b);
+	return equals(this)(b);
 };
 
 // -----------------------------------------------------------------------------
 // Chain
 // -----------------------------------------------------------------------------
 
-Eff.chain = (eff, nextContinuation) =>
+export const chain = (nextContinuation: Function) => (eff: EffMonad) =>
 	eff.cata({
 		Pure: x => nextContinuation(x),
 		Impure: (effect, continuation) =>
@@ -56,17 +77,13 @@ Eff.chain = (eff, nextContinuation) =>
 			),
 	});
 
-Eff.prototype.chain = function chain(nextContinuation) {
-	return Eff.chain(this, nextContinuation);
+Eff.prototype.chain = function(nextContinuation) {
+	return chain(nextContinuation)(this);
 };
 
-Eff.of = Eff.Pure;
-
-export default Eff;
-
-type Pure = { cata: Function };
-type Impure = { cata: Function };
-type EffMonad = Pure | Impure;
+// -----------------------------------------------------------------------------
+// Interpreting and Running
+// -----------------------------------------------------------------------------
 
 export const run = (...interpreters: Array<Function>) => (
 	callback: Function,
@@ -87,8 +104,6 @@ export const run = (...interpreters: Array<Function>) => (
 				},
 			}),
 	)(effectfulMonad);
-
-export const send = (t: any) => Eff.Impure(t, Eff.Pure);
 
 export const interpreter = ({
 	predicate,

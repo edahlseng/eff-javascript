@@ -1,7 +1,6 @@
 /* @flow */
 
 export * from "./eff.js";
-export { default as Eff } from "./eff.js";
 
 import * as FileSystem from "./fileSystem.js";
 export { FileSystem };
