@@ -4,7 +4,7 @@ import test from "ava";
 import jsverify from "jsverify";
 import { pipe } from "ramda";
 
-import Eff, { send } from "./eff";
+import { chain, equals, pure, send } from "./eff";
 
 // Note: JSVerify does not appear to have a way to generate arbitrary arbitraries;
 //       this means that each arbitrary in JSVerify has to be of a certain type.
@@ -22,10 +22,7 @@ test("Reflexivity (Pure)", t => {
 	// equals a a ≡ true
 
 	jsverify.assert(
-		jsverify.forall(
-			"number",
-			a => Eff.equals(Eff.Pure(a), Eff.Pure(a)) === true,
-		),
+		jsverify.forall("number", a => equals(pure(a))(pure(a)) === true),
 	);
 	t.pass();
 });
@@ -36,7 +33,7 @@ test("Reflexivity (Impure)", t => {
 	jsverify.assert(
 		jsverify.forall(
 			"json",
-			effect => Eff.equals(send(effect), send(effect)) === true,
+			effect => equals(send(effect))(send(effect)) === true,
 		),
 	);
 	t.pass();
@@ -49,9 +46,7 @@ test("Symmetry (Pure)", t => {
 		jsverify.forall(
 			"number",
 			"number",
-			(a, b) =>
-				Eff.equals(Eff.Pure(a), Eff.Pure(b)) ===
-				Eff.equals(Eff.Pure(b), Eff.Pure(a)),
+			(a, b) => equals(pure(a))(pure(b)) === equals(pure(b))(pure(a)),
 		),
 	);
 	t.pass();
@@ -64,7 +59,7 @@ test("Symmetry (Impure)", t => {
 		jsverify.forall(
 			"json",
 			"json",
-			(a, b) => Eff.equals(send(a), send(b)) === Eff.equals(send(b), send(a)),
+			(a, b) => equals(send(a))(send(b)) === equals(send(b))(send(a)),
 		),
 	);
 	t.pass();
@@ -76,9 +71,8 @@ test("Transitivity (Pure)", t => {
 
 	jsverify.assert(
 		jsverify.forall("number", "number", "number", (a, b, c) =>
-			Eff.equals(Eff.Pure(a), Eff.Pure(b)) &&
-			Eff.equals(Eff.Pure(b), Eff.Pure(c))
-				? Eff.equals(Eff.Pure(a), Eff.Pure(b))
+			equals(pure(a))(pure(b)) && equals(pure(b))(pure(c))
+				? equals(pure(a))(pure(b))
 				: true,
 		),
 	);
@@ -90,8 +84,8 @@ test("Transitivity (Impure)", t => {
 
 	jsverify.assert(
 		jsverify.forall("json", "json", "json", (a, b, c) =>
-			Eff.equals(send(a), send(b)) && Eff.equals(send(b), send(c))
-				? Eff.equals(send(a), send(b))
+			equals(send(a))(send(b)) && equals(send(b))(send(c))
+				? equals(send(a))(send(b))
 				: true,
 		),
 	);
@@ -133,10 +127,10 @@ test("Left Identity", t => {
 		jsverify.forall("number", "number -> number", (a, f) => {
 			const f2 = pipe(
 				f,
-				Eff.Pure,
+				pure,
 			);
 
-			return Eff.equals(Eff.chain(Eff.Pure(a), f2), f2(a));
+			return equals(chain(f2)(pure(a)))(f2(a));
 		}),
 	);
 	t.pass();
@@ -146,9 +140,7 @@ test("Right Identity", t => {
 	// return m >>= return ≡ m
 
 	jsverify.assert(
-		jsverify.forall("number", a =>
-			Eff.equals(Eff.chain(Eff.Pure(a), Eff.Pure), Eff.Pure(a)),
-		),
+		jsverify.forall("number", a => equals(chain(pure)(pure(a)))(pure(a))),
 	);
 	t.pass();
 });
@@ -164,17 +156,16 @@ test("Associativity", t => {
 			(a, f, g) => {
 				const f2 = pipe(
 					f,
-					Eff.Pure,
+					pure,
 				);
 
 				const g2 = pipe(
 					g,
-					Eff.Pure,
+					pure,
 				);
 
-				return Eff.equals(
-					Eff.chain(Eff.chain(Eff.Pure(a), f2), g2),
-					Eff.chain(Eff.Pure(a), x => Eff.chain(f2(x), g2)),
+				return equals(chain(g2)(chain(f2)(pure(a))))(
+					chain(x => chain(g2)(f2(x)))(pure(a)),
 				);
 			},
 		),
