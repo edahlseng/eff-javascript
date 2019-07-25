@@ -13,7 +13,7 @@ test.cb("Get character", t => {
 
 	const readableStream = new Readable();
 
-	run(interpretInput(readableStream))(readCharacter => {
+	run([interpretInput(readableStream)])(readCharacter => {
 		t.is(readCharacter, character);
 		t.end();
 	})(application);

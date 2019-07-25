@@ -10,7 +10,7 @@ test.cb("Get", t => {
 
 	const application = get();
 
-	run(interpretReader(character))(readData => {
+	run([interpretReader(character)])(readData => {
 		t.is(readData, character);
 		t.end();
 	})(application);

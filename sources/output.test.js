@@ -20,7 +20,7 @@ test.cb("Put string", t => {
 
 	const application = putString(stringToWrite);
 
-	run(interpretOutput(writableStream))(() => {
+	run([interpretOutput(writableStream)])(() => {
 		t.is(writtenString, stringToWrite);
 		t.end();
 	})(application);
@@ -40,7 +40,7 @@ test.cb("Put string line", t => {
 
 	const application = putStringLine(stringToWrite);
 
-	run(interpretOutput(writableStream))(() => {
+	run([interpretOutput(writableStream)])(() => {
 		t.is(writtenString, stringToWrite + "\n");
 		t.end();
 	})(application);

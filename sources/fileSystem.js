@@ -13,8 +13,7 @@ const FileSystem = taggedSum("FileSystem", {
 });
 
 export const readFile = (path: string) => send(FileSystem.readFile(path));
-export const writeFile = (
-	path: string,
+export const writeFile = (path: string) => (
 	content: string | Buffer | $TypedArray | DataView,
 ) => send(FileSystem.writeFile(path, content));
 

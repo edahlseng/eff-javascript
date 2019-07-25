@@ -85,14 +85,14 @@ Eff.prototype.chain = function(nextContinuation) {
 // Interpreting and Running
 // -----------------------------------------------------------------------------
 
-export const run = (...interpreters: Array<Function>) => (
-	callback: Function,
-) => (effectfulMonad: EffMonad) =>
+export const run = (interpreters: Array<Function>) => (callback: Function) => (
+	effectfulMonad: EffMonad,
+) =>
 	interpreters.reduce(
 		(previousInterpreter, currentInterpreter) =>
 			currentInterpreter({
 				interpreterContinuation: previousInterpreter,
-				interpreterRestart: x => run(...interpreters)(callback)(x),
+				interpreterRestart: x => run(interpreters)(callback)(x),
 			}),
 		finalMonad =>
 			finalMonad.cata({
