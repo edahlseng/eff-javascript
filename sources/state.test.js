@@ -10,7 +10,7 @@ test.cb("Get", t => {
 
 	const application = get();
 
-	run(interpretState(state))(receivedState => {
+	run([interpretState(state)])(receivedState => {
 		t.is(receivedState, state);
 		t.end();
 	})(application);
@@ -22,7 +22,7 @@ test.cb("Modify", t => {
 
 	const application = modify(modification).chain(get);
 
-	run(interpretState(state))(receivedState => {
+	run([interpretState(state)])(receivedState => {
 		t.is(receivedState, modification(state));
 		t.end();
 	})(application);
@@ -34,7 +34,7 @@ test.cb("Put", t => {
 
 	const application = put(newState).chain(get);
 
-	run(interpretState(state))(receivedState => {
+	run([interpretState(state)])(receivedState => {
 		t.is(receivedState, newState);
 		t.end();
 	})(application);
