@@ -5,10 +5,15 @@ import fs from "fs";
 import path from "path";
 
 import { run } from "./eff";
-import { readFile, writeFile, interpretLocalFileSystem } from "./fileSystem";
+import {
+	readFile,
+	writeFile,
+	interpretLocalFileSystem,
+	interpretMockFileSystem,
+} from "./fileSystem";
 import { tempDirectory } from "./testUtils.js";
 
-test.cb("Read file", t => {
+test.cb("Local File System – Read file", t => {
 	const a = "Hello, World! I'm reading!";
 	const fileName = "./helloWorldReading.txt";
 
@@ -28,7 +33,7 @@ test.cb("Read file", t => {
 	});
 });
 
-test.cb("Write file", t => {
+test.cb("Local File System – Write file", t => {
 	const a = "Hello, World! I'm writing!";
 	const fileName = "./helloWorldWriting.txt";
 
@@ -46,4 +51,50 @@ test.cb("Write file", t => {
 			});
 		})(application);
 	});
+});
+
+test.cb("Mock File System – Read file", t => {
+	const a = "Hello, World! I'm writing!";
+	const fileName = "./helloWorldWriting.txt";
+	const directory = "/directory";
+
+	const application = readFile(fileName);
+
+	let fileSystem = { "/directory/helloWorldWriting.txt": a };
+
+	run(
+		interpretMockFileSystem({
+			fileSystemRoot: directory,
+			startingFileSystem: fileSystem,
+			onUpdate: newFileSystem => {
+				fileSystem = newFileSystem;
+			},
+		}),
+	)(b => {
+		t.is(b, a);
+		t.end();
+	})(application);
+});
+
+test.cb("Mock File System – Write file", t => {
+	const a = "Hello, World! I'm writing!";
+	const fileName = "./helloWorldWriting.txt";
+	const directory = "/directory";
+
+	const application = writeFile(fileName, a);
+
+	let fileSystem: { [string]: string } = {};
+
+	run(
+		interpretMockFileSystem({
+			fileSystemRoot: directory,
+			startingFileSystem: fileSystem,
+			onUpdate: newFileSystem => {
+				fileSystem = newFileSystem;
+			},
+		}),
+	)(() => {
+		t.is(fileSystem["/directory/helloWorldWriting.txt"], a);
+		t.end();
+	})(application);
 });

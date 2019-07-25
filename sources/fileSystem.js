@@ -3,6 +3,7 @@
 import { taggedSum } from "daggy";
 import fs from "fs";
 import path from "path";
+import { assoc } from "ramda";
 
 import { interpreter, send } from "./eff";
 
@@ -37,3 +38,31 @@ export const interpretLocalFileSystem = (fileSystemRoot: string) =>
 					),
 			}),
 	});
+
+export const interpretMockFileSystem = ({
+	fileSystemRoot,
+	startingFileSystem,
+	onUpdate,
+}: {
+	fileSystemRoot: string,
+	startingFileSystem: { ... },
+	onUpdate?: ({ ... }) => void,
+}) => {
+	let fileSystem = startingFileSystem;
+
+	return interpreter({
+		predicate: x => FileSystem.is(x),
+		handler: fileSystemEffect =>
+			fileSystemEffect.cata({
+				readFile: filePath => continuation =>
+					continuation(fileSystem[path.resolve(fileSystemRoot, filePath)]),
+				writeFile: (filePath, content) => continuation => {
+					fileSystem = assoc(path.resolve(fileSystemRoot, filePath))(content)(
+						fileSystem,
+					);
+					if (onUpdate) onUpdate({ ...fileSystem });
+					return continuation(null);
+				},
+			}),
+	});
+};
