@@ -37,28 +37,23 @@ This library comes with several different effects already defined, though custom
 The first step is to write the application as a definition of the effects that will be performed:
 
 ```JavaScript
-import { FileSystem, run } from "eff"; // Note: `run` will be used later on in the example
+import { FileSystem, run } from "eff";
 
-const uppercase = str => str.toUppercase();
+const upperCase = str => str.toUpperCase();
 
 const application =
 	FileSystem.readFile("./a.txt")
-	.map(uppercase)
-	.chain(writeFile("./b.txt"));
+	.map(upperCase)
+	.chain(FileSystem.writeFile("./b.txt"));
 ```
 
 The application as written above will not actually _do_ anything, it's just a _description of what should be done_. The magic comes from interpreting this description:
 
 ```JavaScript
-import { compose } from "ramda";
-
-const interpreter = compose(
-	run,
-	FileSystem.interpretLocalFileSystem("/home/me")
-)(() => console.log("Done!"));
+import { run } from "eff";
 
 // In the line below the application is interpreted. This is when the effects are actually run.
-interpreter(application)
+run([FileSystem.interpretLocalFileSystem("/home/me")])(() => console.log("Done!"))(application)
 ```
 
 The interpreter contains two different parts:
@@ -72,26 +67,26 @@ At first blush this separation of effects into a definition and its interpretati
 Let's take a closer look at the first one, testability, in action:
 
 ```JavaScript
-const mockInterpreter = compose(
-	run,
-	FileSystem.interpretMock({
+let fileSystem = { "/home/me/a.txt": "hello, world" };
+
+run([
+	FileSystem.interpretMockFileSystem({
 		workingDirectory: "/home/me",
-		startingFileSystem: {
-			"/home/me/a.txt": "hello, world"
+		startingFileSystem: fileSystem,
+		onUpdate: newFileSystem => {
+			fileSystem = newFileSystem;
 		}
-	 })
-)(mockFileSystemOutput => {
+	})
+])(mockFileSystemOutput => {
 	if (mockFileSystemOutput["/home/me/b.txt"] === "HELLO, WORLD") {
 		console.log("Test passed!");
 	} else {
 		console.log("Test failed!");
 	}
-});
-
-mockInterpreter(application);
+})(application);
 ```
 
-We can interpret the application definition with a mock interpreter just as easily as the original interpreter. This allows us to verify the logic of the application without needing to actually interact with a live filesystem.
+We can interpret the application definition with a mock interpreter just as easily as the original interpreter. This allows us to verify the logic of the application without needing to actually interact with a live file system.
 
 Contributing
 ------------
