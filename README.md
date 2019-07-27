@@ -3,7 +3,7 @@ Eff
 
 An extensible effect monad.
 
-[![CircleCI](https://circleci.com/gh/edahlseng/eff/tree/master.svg?style=shield)](https://circleci.com/gh/edahlseng/eff/tree/master)
+[![CircleCI](https://circleci.com/gh/edahlseng/eff-javascript/tree/master.svg?style=shield)](https://circleci.com/gh/edahlseng/eff-javascript/tree/master)
 
 Eff is a container for effects. It separates effects into two parts – a description of what needs to be done, and the logic to make it happen. These individual parts can be combined with other effects, creating applications that are much easier to understand, test, and maintain.
 
