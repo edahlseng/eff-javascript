@@ -2,6 +2,7 @@
 
 import { always, pipe, equals as equalsGeneric, F } from "ramda";
 import { taggedSum } from "daggy";
+import showSanctuary from "sanctuary-show";
 
 // value :: any
 // effect :: any
@@ -15,14 +16,15 @@ type Pure = { cata: Function };
 type Impure = { cata: Function };
 type EffMonad = Pure | Impure;
 
-export const pure = Eff.Pure;
+export const pure = (x: *) => Eff.Pure(x);
+(pure: any).toString = () => "pure"; // See https://github.com/facebook/flow/issues/6196 for more information on why we cast to `any` here
 
 export const of = pure;
 
 export const impure = (continuation: Function) => (effect: EffMonad) =>
 	Eff.Impure(effect, continuation);
 
-export const send = (effect: any) => Eff.Impure(effect, Eff.Pure);
+export const send = (effect: any) => Eff.Impure(effect, pure);
 
 const pipeK = (a, b) => c => a(c).chain(b);
 
@@ -79,6 +81,29 @@ export const chain = (nextContinuation: Function) => (eff: EffMonad) =>
 
 Eff.prototype.chain = function(nextContinuation) {
 	return chain(nextContinuation)(this);
+};
+
+// -----------------------------------------------------------------------------
+// Show/toString
+// -----------------------------------------------------------------------------
+
+export const show = (eff: EffMonad) =>
+	eff.cata({
+		Pure: value => `pure (${showSanctuary(value)})`,
+		Impure: (effect, continuation) =>
+			`impure (${showSanctuary(continuation)}) (${showSanctuary(effect)})`,
+	});
+
+Eff.prototype.show = function() {
+	return show(this);
+};
+
+Eff.prototype["@@show"] = function() {
+	return show(this);
+};
+
+Eff.prototype.toString = function() {
+	return show(this);
 };
 
 // -----------------------------------------------------------------------------
