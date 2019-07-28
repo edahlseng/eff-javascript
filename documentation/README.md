@@ -264,6 +264,7 @@ Interoperability
 
 In order to make it easier to use Eff with other libraries, the Eff instance is compatible with the following specifications:
 * [Sanctuary Show](https://github.com/sanctuary-js/sanctuary-show)
+* [Fantasy Land](https://github.com/fantasyland/fantasy-land)'s `Functor` specification
 
 Built-in Effects
 -----------------
