@@ -46,7 +46,7 @@
   "devDependencies": {
     "@eric.dahlseng/configuration-build": "^0.1.0",
     "@eric.dahlseng/linter-configuration": "^0.3.0",
-    "@eric.dahlseng/standard-version": "^1.0.3",
+    "@eric.dahlseng/standard-version": "^1.1.0",
     "ava": "^1.1.0",
     "flow-bin": "^0.100.0",
     "jsverify": "^0.8.4",
