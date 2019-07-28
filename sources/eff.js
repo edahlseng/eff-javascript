@@ -39,6 +39,10 @@ Eff.prototype.map = function(f) {
 	return map(f)(this);
 };
 
+Eff.prototype["fantasy-land/map"] = function(f) {
+	return map(f)(this);
+};
+
 // -----------------------------------------------------------------------------
 // Equals
 // -----------------------------------------------------------------------------
@@ -54,7 +58,11 @@ export const equals = (a: EffMonad) => (b: EffMonad) =>
 				Pure: F,
 				Impure: (bEffect, bContinuation) =>
 					equalsGeneric(aEffect, bEffect) &&
-					equalsGeneric(aContinuation, bContinuation),
+					(equalsGeneric(aContinuation, bContinuation) ||
+						(aContinuation.length === 0 &&
+							bContinuation.length === 0 &&
+							equals(aContinuation())(bContinuation())) ||
+						(x => equals(aContinuation(x))(bContinuation(x)))(Math.random())), // The use of `Math.random()` here isn't very reproducible. Is there a better way to compare impure Effs?
 			}),
 	});
 
