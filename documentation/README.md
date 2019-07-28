@@ -6,10 +6,12 @@ Eff Documentation
   * [pure](#pure)
   * [impure](#impure)
   * [send](#send)
+  * [show](#show)
   * [equals](#equals)
   * [chain](#chain)
   * [map](#map)
   * [run](#run)
+* [Interoperability](#interoperability)
 * [Built-in Effects](#built-in-effects)
   * [File System](#file-system)
   * [Input](#input)
@@ -56,7 +58,7 @@ declare function pure<value>(value): Pure<value>;
 Example:
 
 ```js
-import { pure } from 'eff';
+import { pure } from "eff";
 
 const application = pure(28);
 ```
@@ -66,7 +68,7 @@ const application = pure(28);
 `of` is an alias for `pure`.
 
 ```js
-import { of } from 'eff'
+import { of } from "eff"
 
 const application = of(28);
 ```
@@ -88,7 +90,7 @@ declare function impure<A, value, effect>((A) => value): (effect) => Impure<effe
 Example:
 
 ```js
-import { impure, pure } from 'eff';
+import { impure, pure } from "eff";
 
 const effect = { type: 'always-three' }; // The effect can be whatever we want
 
@@ -110,11 +112,33 @@ declare function send<value, effect>(effect): Impure<effect, value>;
 Example:
 
 ```js
-import { send } from 'eff';
+import { send } from "eff";
 
-const effect = { type: 'random-number' }; // The effect can be whatever we want
+const effect = { type: "random-number" }; // The effect can be whatever we want
 
 const application = send(effect); // This is equivalent to `impure(pure)(effect)`
+```
+
+### show
+
+`show` is a function that converts an Eff instance to a string representation. This can be particularly useful for logging.
+
+```hs
+show :: Eff a b -> string
+```
+
+```flow
+declare function show<a, b>(Eff<a, b>): string;
+```
+
+Example:
+
+```js
+import { pure, show } from "eff";
+
+const effExample = pure(2);
+
+console.log(show(effExample)); // Prints "pure (2)"
 ```
 
 ### equals
@@ -132,7 +156,7 @@ declare function equals<a, b, c, d>(Eff<a, b>): Eff<c, d> => boolean;
 Example:
 
 ```js
-import { equals, pure } from 'eff';
+import { equals, pure } from "eff";
 
 console.log(equals(pure(1))(pure(2))); // Prints "false"
 ```
@@ -152,9 +176,9 @@ declare function chain<a, b, c, d>((a) => Eff<b, c>): Eff<d, a> => Eff<d | b, c>
 Example:
 
 ```js
-import { chain, pure, send } from 'eff';
+import { chain, pure, send } from "eff";
 
-const application = chain(value => pure(value * 2))(send({ type: 'random-number' }));
+const application = chain(value => pure(value * 2))(send({ type: "random-number" }));
 ```
 
 ### map
@@ -172,9 +196,9 @@ declare function map<a, b, c>((a) => b): Eff<c, a> => Eff<c, b>
 Example:
 
 ```js
-import { map, send } from 'eff';
+import { map, send } from "eff";
 
-const application = map(value => value * 2)(send({ type: 'random-number' }));
+const application = map(value => value * 2)(send({ type: "random-number" }));
 ```
 
 ### interpreter
@@ -198,10 +222,10 @@ declare function interpreter<a, b, c, d, effect>({ predicate: (effect) => boolea
 Example:
 
 ```js
-import { interpreter, map, pure, send } from 'eff';
+import { interpreter, map, pure, send } from "eff";
 
 const randomNumberInterpreter = interpreter({
-    predicate: x => x.type === 'random-number',
+    predicate: x => x.type === "random-number",
     handler: effect => continuation => continuation(Math.random()),
 })
 ```
@@ -223,17 +247,23 @@ declare function run<a, b>(interpreters): ((a) -> void) -> Eff<a, b>
 Example:
 
 ```js
-import { chain, interpreter, pure, run, send } from 'eff';
+import { chain, interpreter, pure, run, send } from "eff";
 
-const application = chain(value => pure(value * 2))(send({ type: 'random-number' }));
+const application = chain(value => pure(value * 2))(send({ type: "random-number" }));
 
 const randomNumberInterpreter = interpreter({
-    predicate: x => x.type === 'random-number',
+    predicate: x => x.type === "random-number",
     handler: effect => continuation => continuation(Math.random()),
 })
 
 run([randomNumberInterpreter])(() => console.log('All done!'))(application);
 ```
+
+Interoperability
+----------------
+
+In order to make it easier to use Eff with other libraries, the Eff instance is compatible with the following specifications:
+* [Sanctuary Show](https://github.com/sanctuary-js/sanctuary-show)
 
 Built-in Effects
 -----------------
@@ -275,7 +305,7 @@ declare var interpretLocalFileSystem = Interpreter<read-file | write-file>
 #### Example
 
 ```js
-import { fileSystem, run } from 'eff';
+import { fileSystem, run } from "eff";
 
 const main =
 	fileSystem.readFile("./helloWorld.txt")
@@ -314,7 +344,7 @@ declare var interpretInput = Interpreter<get-character>
 #### Example
 
 ```js
-import { input, run } from 'eff';
+import { input, run } from "eff";
 
 const main = input.getCharacter();
 
@@ -361,7 +391,7 @@ declare var interpretOutput = Interpreter<put>
 #### Example
 
 ```js
-import { output, run } from 'eff';
+import { output, run } from "eff";
 
 const main = output.putString("Hello, World!");
 

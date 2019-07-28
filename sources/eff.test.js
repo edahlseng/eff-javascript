@@ -4,7 +4,7 @@ import test from "ava";
 import jsverify from "jsverify";
 import { pipe } from "ramda";
 
-import { chain, equals, pure, send } from "./eff";
+import { chain, equals, impure, pure, send, show } from "./eff";
 
 // Note: JSVerify does not appear to have a way to generate arbitrary arbitraries;
 //       this means that each arbitrary in JSVerify has to be of a certain type.
@@ -168,6 +168,66 @@ test("Associativity", t => {
 					chain(x => chain(g2)(f2(x)))(pure(a)),
 				);
 			},
+		),
+	);
+	t.pass();
+});
+
+// -----------------------------------------------------------------------------
+// Show (https://github.com/sanctuary-js/sanctuary-show)
+// -----------------------------------------------------------------------------
+
+test("Show – Pure", t => {
+	// eval ('(' + show (x) + ')') = x
+
+	jsverify.assert(
+		jsverify.forall("number", value => {
+			const x = pure(value);
+			global.pure = pure;
+			const result = equals(eval("(" + show(x) + ")"))(x);
+			delete global.pure;
+			return result;
+		}),
+	);
+	["show", "@@show", "toString"].forEach(method =>
+		jsverify.assert(
+			jsverify.forall("number", value => {
+				const x = pure(value);
+				global.pure = pure;
+				const result = equals(eval("(" + x[method]() + ")"))(x);
+				delete global.pure;
+				return result;
+			}),
+		),
+	);
+	t.pass();
+});
+
+test("Show – Impure", t => {
+	// eval ('(' + show (x) + ')') = x
+
+	jsverify.assert(
+		jsverify.forall("json", effect => {
+			const x = send(effect);
+			global.impure = impure;
+			global.pure = pure;
+			const result = equals(eval("(" + show(x) + ")"))(x);
+			delete global.impure;
+			delete global.pure;
+			return result;
+		}),
+	);
+	["show", "@@show", "toString"].forEach(method =>
+		jsverify.assert(
+			jsverify.forall("json", effect => {
+				const x = send(effect);
+				global.impure = impure;
+				global.pure = pure;
+				const result = equals(eval("(" + x[method]() + ")"))(x);
+				delete global.impure;
+				delete global.pure;
+				return result;
+			}),
 		),
 	);
 	t.pass();

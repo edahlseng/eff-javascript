@@ -41,7 +41,8 @@
   "homepage": "https://github.com/edahlseng/eff#readme",
   "dependencies": {
     "daggy": "^1.3.0",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "sanctuary-show": "^1.0.0"
   },
   "devDependencies": {
     "@eric.dahlseng/configuration-build": "^0.1.0",
