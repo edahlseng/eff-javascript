@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.5.0](https://github.com/edahlseng/eff/compare/v0.4.0...v0.5.0) (2019-09-19)
+
+
+### Bug Fixes
+
+* Update flow-bin and jsverify types ([a269c8f](https://github.com/edahlseng/eff/commit/a269c8f))
+
+
+### Features
+
+* Add Fantasy Land Functor compatibility ([c2cff08](https://github.com/edahlseng/eff/commit/c2cff08))
+* Add show function and associated methods ([0b82372](https://github.com/edahlseng/eff/commit/0b82372))
+
+
+
 # [0.4.0](https://github.com/edahlseng/eff/compare/v0.3.0...v0.4.0) (2019-07-26)
 
 
